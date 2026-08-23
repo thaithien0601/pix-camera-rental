@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
 
 export default function Admin() {
-    // Trạng thái bảo mật mã PIN
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [inputPin, setInputPin] = useState('');
-    const ADMIN_PIN = '1234'; // Bạn có thể đổi mã PIN tại đây
+    const ADMIN_PIN = '0601';
 
     const [cameras, setCameras] = useState([]);
     const [name, setName] = useState('');
@@ -16,15 +15,68 @@ export default function Admin() {
     const [price24h, setPrice24h] = useState('');
     const [image, setImage] = useState('');
 
-    // Thông số kỹ thuật linh hoạt cho mọi thiết bị
-    const [sensor, setSensor] = useState('');
-    const [isoRange, setIsoRange] = useState('');
-    const [lensMount, setLensMount] = useState('');
-    const [weight, setWeight] = useState('');
-    const [videoCapabilities, setVideoCapabilities] = useState('');
-    const [batteryLife, setBatteryLife] = useState('');
+    // 6 trường thông số kỹ thuật
+    const [spec1, setSpec1] = useState('');
+    const [spec2, setSpec2] = useState('');
+    const [spec3, setSpec3] = useState('');
+    const [spec4, setSpec4] = useState('');
+    const [spec5, setSpec5] = useState('');
+    const [spec6, setSpec6] = useState('');
 
     const [message, setMessage] = useState('');
+
+    // HÀM ĐỔI NHÃN VÀ GỢI Ý ĐỘNG THEO LOẠI THIẾT BỊ
+    const getFieldLabels = () => {
+        switch (category) {
+            case 'Ống kính':
+                return {
+                    l1: { label: 'Tiêu cự', placeholder: 'VD: 16-35mm' },
+                    l2: { label: 'Khẩu độ tối đa', placeholder: 'VD: f/4' },
+                    l3: { label: 'Ngàm tương thích', placeholder: 'VD: Sony E-mount' },
+                    l4: { label: 'Trọng lượng', placeholder: 'VD: 353g' },
+                    l5: { label: 'Tính năng đặc biệt', placeholder: 'VD: Power Zoom, Chống bụi ẩm' },
+                    l6: { label: 'Kích thước Filter', placeholder: 'VD: 72mm' }
+                };
+            case 'Đèn Led':
+                return {
+                    l1: { label: 'Công suất', placeholder: 'VD: 60W' },
+                    l2: { label: 'Nhiệt độ màu', placeholder: 'VD: 2700K - 6500K' },
+                    l3: { label: 'Chỉ số CRI / TLCI', placeholder: 'VD: CRI 96+' },
+                    l4: { label: 'Trọng lượng', placeholder: 'VD: 830g' },
+                    l5: { label: 'Hiệu ứng ánh sáng', placeholder: 'VD: 10 hiệu ứng FX' },
+                    l6: { label: 'Nguồn điện / Pin', placeholder: 'VD: Pin V-mount / Adapter' }
+                };
+            case 'Flash':
+                return {
+                    l1: { label: 'Công suất / GN', placeholder: 'VD: GN60' },
+                    l2: { label: 'Tốc độ hồi đèn', placeholder: 'VD: 0.1 - 1.5s' },
+                    l3: { label: 'Hệ thống TTL', placeholder: 'VD: Sony / Canon TTL' },
+                    l4: { label: 'Trọng lượng', placeholder: 'VD: 560g' },
+                    l5: { label: 'Chế độ đèn', placeholder: 'VD: TTL / Manual / Multi' },
+                    l6: { label: 'Loại pin', placeholder: 'VD: Pin Li-ion 2900mAh' }
+                };
+            case 'Gimbal':
+                return {
+                    l1: { label: 'Tải trọng tối đa', placeholder: 'VD: 4.5 kg' },
+                    l2: { label: 'Số trục chống rung', placeholder: 'VD: 3 trục' },
+                    l3: { label: 'Góc quay / Xoay', placeholder: 'VD: 360 độ vô cực' },
+                    l4: { label: 'Trọng lượng', placeholder: 'VD: 1.5 kg' },
+                    l5: { label: 'Màn hình điều khiển', placeholder: 'VD: OLED cảm ứng' },
+                    l6: { label: 'Thời gian pin', placeholder: 'VD: 12 giờ' }
+                };
+            default: // Máy ảnh
+                return {
+                    l1: { label: 'Cảm biến', placeholder: 'VD: Full-frame Exmor R' },
+                    l2: { label: 'Dải ISO', placeholder: 'VD: 100 - 51200' },
+                    l3: { label: 'Ngàm ống kính', placeholder: 'VD: E-mount' },
+                    l4: { label: 'Trọng lượng', placeholder: 'VD: 658g' },
+                    l5: { label: 'Khả năng quay phim', placeholder: 'VD: 4K 60p' },
+                    l6: { label: 'Thời lượng pin', placeholder: 'VD: 400 tấm' }
+                };
+        }
+    };
+
+    const labels = getFieldLabels();
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -32,7 +84,7 @@ export default function Admin() {
             setIsLoggedIn(true);
             setMessage('');
         } else {
-            setMessage('❌ Mã PIN không chính xác! Vui lòng thử lại.');
+            setMessage('❌ Mã PIN không chính xác!');
         }
     };
 
@@ -66,12 +118,12 @@ export default function Admin() {
                     price_12h: Number(price12h),
                     price_24h: Number(price24h),
                     image,
-                    sensor,
-                    isoRange,
-                    lensMount,
-                    weight,
-                    videoCapabilities,
-                    batteryLife
+                    sensor: spec1,
+                    isoRange: spec2,
+                    lensMount: spec3,
+                    weight: spec4,
+                    videoCapabilities: spec5,
+                    batteryLife: spec6
                 })
             });
 
@@ -82,12 +134,12 @@ export default function Admin() {
                 setPrice12h('');
                 setPrice24h('');
                 setImage('');
-                setSensor('');
-                setIsoRange('');
-                setLensMount('');
-                setWeight('');
-                setVideoCapabilities('');
-                setBatteryLife('');
+                setSpec1('');
+                setSpec2('');
+                setSpec3('');
+                setSpec4('');
+                setSpec5('');
+                setSpec6('');
                 fetchCameras();
             } else {
                 setMessage('❌ Lỗi khi thêm thiết bị.');
@@ -114,16 +166,13 @@ export default function Admin() {
         }
     };
 
-    // NẾU CHƯA ĐĂNG NHẬP -> HIỂN THỊ MÀN HÌNH NHẬP MÃ PIN
     if (!isLoggedIn) {
         return (
             <div className="max-w-md mx-auto px-6 py-24">
                 <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center space-y-6">
                     <h2 className="text-2xl font-black">🔐 Đăng Nhập Quản Trị</h2>
-                    <p className="text-xs text-gray-500">Vui lòng nhập mã PIN bảo mật để truy cập Admin Panel (Mã mặc định: 1234)</p>
-
+                    <p className="text-xs text-gray-500">Nhập mã PIN để tiếp tục (Mặc định: 1234)</p>
                     {message && <div className="p-3 text-xs font-bold rounded-lg bg-red-50 text-red-700 border border-red-200">{message}</div>}
-
                     <form onSubmit={handleLogin} className="space-y-4">
                         <input
                             type="password"
@@ -142,7 +191,6 @@ export default function Admin() {
         );
     }
 
-    // NẾU ĐÃ ĐĂNG NHẬP THÀNH CÔNG -> HIỂN THỊ GIAO DIỆN ADMIN
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
             <div className="flex justify-between items-center mb-8">
@@ -207,33 +255,35 @@ export default function Admin() {
                         <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:border-black" placeholder="Dán link ảnh hoặc điền tên file..." />
                     </div>
 
-                    {/* KHU VỰC THÔNG SỐ LINH HOẠT CHO MỌI THIẾT BỊ */}
+                    {/* KHU VỰC THÔNG SỐ ĐỘNG THEO LOẠI THIẾT BỊ */}
                     <div className="border-t border-gray-200 pt-6">
-                        <h4 className="font-extrabold text-sm mb-4 text-gray-800">Thông số kỹ thuật linh hoạt</h4>
+                        <h4 className="font-extrabold text-sm mb-4 text-gray-800">
+                            Thông số kỹ thuật chi tiết cho: <span className="text-blue-600 uppercase">{category}</span>
+                        </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
                             <div>
-                                <label className="block font-semibold text-gray-600 mb-1">Thông số chính</label>
-                                <input type="text" value={sensor} onChange={(e) => setSensor(e.target.value)} placeholder="VD: Tiêu cự 16-35mm / Công suất 60W" className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
+                                <label className="block font-semibold text-gray-600 mb-1">{labels.l1.label}</label>
+                                <input type="text" value={spec1} onChange={(e) => setSpec1(e.target.value)} placeholder={labels.l1.placeholder} className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
                             </div>
                             <div>
-                                <label className="block font-semibold text-gray-600 mb-1">Đặc tính kỹ thuật</label>
-                                <input type="text" value={isoRange} onChange={(e) => setIsoRange(e.target.value)} placeholder="VD: Khẩu độ f/4 / Nhiệt độ màu 2700K" className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
+                                <label className="block font-semibold text-gray-600 mb-1">{labels.l2.label}</label>
+                                <input type="text" value={spec2} onChange={(e) => setSpec2(e.target.value)} placeholder={labels.l2.placeholder} className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
                             </div>
                             <div>
-                                <label className="block font-semibold text-gray-600 mb-1">Ngàm / Tương thích</label>
-                                <input type="text" value={lensMount} onChange={(e) => setLensMount(e.target.value)} placeholder="VD: Sony E-mount / Universal" className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
+                                <label className="block font-semibold text-gray-600 mb-1">{labels.l3.label}</label>
+                                <input type="text" value={spec3} onChange={(e) => setSpec3(e.target.value)} placeholder={labels.l3.placeholder} className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
                             </div>
                             <div>
-                                <label className="block font-semibold text-gray-600 mb-1">Trọng lượng</label>
-                                <input type="text" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="VD: 353g" className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
+                                <label className="block font-semibold text-gray-600 mb-1">{labels.l4.label}</label>
+                                <input type="text" value={spec4} onChange={(e) => setSpec4(e.target.value)} placeholder={labels.l4.placeholder} className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
                             </div>
                             <div>
-                                <label className="block font-semibold text-gray-600 mb-1">Tính năng nổi bật</label>
-                                <input type="text" value={videoCapabilities} onChange={(e) => setVideoCapabilities(e.target.value)} placeholder="VD: Power Zoom, Chống bụi ẩm" className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
+                                <label className="block font-semibold text-gray-600 mb-1">{labels.l5.label}</label>
+                                <input type="text" value={spec5} onChange={(e) => setSpec5(e.target.value)} placeholder={labels.l5.placeholder} className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
                             </div>
                             <div>
-                                <label className="block font-semibold text-gray-600 mb-1">Nguồn điện / Pin</label>
-                                <input type="text" value={batteryLife} onChange={(e) => setBatteryLife(e.target.value)} placeholder="VD: Pin rời / Sạc trực tiếp" className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
+                                <label className="block font-semibold text-gray-600 mb-1">{labels.l6.label}</label>
+                                <input type="text" value={spec6} onChange={(e) => setSpec6(e.target.value)} placeholder={labels.l6.placeholder} className="w-full border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:border-black" />
                             </div>
                         </div>
                     </div>
