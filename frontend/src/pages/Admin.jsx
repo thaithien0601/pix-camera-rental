@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
 
 export default function Admin() {
+    // Trạng thái bảo mật mã PIN
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [inputPin, setInputPin] = useState('');
+    const ADMIN_PIN = '1234'; // Bạn có thể đổi mã PIN tại đây
+
     const [cameras, setCameras] = useState([]);
     const [name, setName] = useState('');
     const [brand, setBrand] = useState('Sony');
@@ -11,15 +16,25 @@ export default function Admin() {
     const [price24h, setPrice24h] = useState('');
     const [image, setImage] = useState('');
 
-    // Thông số linh hoạt chung cho mọi thiết bị
-    const [sensor, setSensor] = useState('');       // Dùng cho: Tiêu cự / Công suất chính
-    const [isoRange, setIsoRange] = useState('');   // Dùng cho: Khẩu độ / Nhiệt độ màu
-    const [lensMount, setLensMount] = useState(''); // Dùng cho: Ngàm / Tương thích
-    const [weight, setWeight] = useState('');       // Dùng cho: Trọng lượng
-    const [videoCapabilities, setVideoCapabilities] = useState(''); // Dùng cho: Tính năng nổi bật
-    const [batteryLife, setBatteryLife] = useState(''); // Dùng cho: Nguồn điện / Pin
+    // Thông số kỹ thuật linh hoạt cho mọi thiết bị
+    const [sensor, setSensor] = useState('');
+    const [isoRange, setIsoRange] = useState('');
+    const [lensMount, setLensMount] = useState('');
+    const [weight, setWeight] = useState('');
+    const [videoCapabilities, setVideoCapabilities] = useState('');
+    const [batteryLife, setBatteryLife] = useState('');
 
     const [message, setMessage] = useState('');
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        if (inputPin === ADMIN_PIN) {
+            setIsLoggedIn(true);
+            setMessage('');
+        } else {
+            setMessage('❌ Mã PIN không chính xác! Vui lòng thử lại.');
+        }
+    };
 
     const fetchCameras = async () => {
         try {
@@ -32,8 +47,10 @@ export default function Admin() {
     };
 
     useEffect(() => {
-        fetchCameras();
-    }, []);
+        if (isLoggedIn) {
+            fetchCameras();
+        }
+    }, [isLoggedIn]);
 
     const handleAddCamera = async (e) => {
         e.preventDefault();
@@ -97,9 +114,43 @@ export default function Admin() {
         }
     };
 
+    // NẾU CHƯA ĐĂNG NHẬP -> HIỂN THỊ MÀN HÌNH NHẬP MÃ PIN
+    if (!isLoggedIn) {
+        return (
+            <div className="max-w-md mx-auto px-6 py-24">
+                <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center space-y-6">
+                    <h2 className="text-2xl font-black">🔐 Đăng Nhập Quản Trị</h2>
+                    <p className="text-xs text-gray-500">Vui lòng nhập mã PIN bảo mật để truy cập Admin Panel (Mã mặc định: 1234)</p>
+
+                    {message && <div className="p-3 text-xs font-bold rounded-lg bg-red-50 text-red-700 border border-red-200">{message}</div>}
+
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        <input
+                            type="password"
+                            value={inputPin}
+                            onChange={(e) => setInputPin(e.target.value)}
+                            placeholder="Nhập mã PIN..."
+                            required
+                            className="w-full border border-gray-300 rounded-xl p-3 text-center text-lg tracking-widest focus:outline-none focus:border-black"
+                        />
+                        <button type="submit" className="w-full bg-black text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider hover:bg-gray-800 transition">
+                            Xác Nhận Đăng Nhập
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    // NẾU ĐÃ ĐĂNG NHẬP THÀNH CÔNG -> HIỂN THỊ GIAO DIỆN ADMIN
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
-            <h1 className="text-3xl font-black mb-8">Trang Quản Trị Hệ Thống (Admin Panel)</h1>
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-black">Trang Quản Trị Hệ Thống (Admin Panel)</h1>
+                <button onClick={() => setIsLoggedIn(false)} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition">
+                    Đăng Xuất 🔒
+                </button>
+            </div>
 
             {message && <div className="mb-6 p-4 text-sm font-bold rounded-xl bg-blue-50 text-blue-900 border border-blue-200">{message}</div>}
 
@@ -158,7 +209,7 @@ export default function Admin() {
 
                     {/* KHU VỰC THÔNG SỐ LINH HOẠT CHO MỌI THIẾT BỊ */}
                     <div className="border-t border-gray-200 pt-6">
-                        <h4 className="font-extrabold text-sm mb-4 text-gray-800">Thông số kỹ thuật linh hoạt (Phù hợp cho Máy ảnh, Ống kính, Đèn, Gimbal,...)</h4>
+                        <h4 className="font-extrabold text-sm mb-4 text-gray-800">Thông số kỹ thuật linh hoạt</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
                             <div>
                                 <label className="block font-semibold text-gray-600 mb-1">Thông số chính</label>
