@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 
+// Import các file ảnh cục bộ từ thư mục assets
 import categoryCameraImg from '../assets/category-camera.jpg';
 import categoryLensImg from '../assets/category-lens.jpg';
 import categoryAccessoryImg from '../assets/category-accessory.jpg';
 import categoryLedLightImg from '../assets/category-led-light.jpg';
 import categoryGimbalImg from '../assets/category-gimbal.jpg';
 import a74CameraImg from '../assets/a74-camera.jpg';
+import a73CameraImg from '../assets/a73-camera.jpg';
+import sonyA7r3Img from '../assets/sony-a7r3.jpg';
 
 export default function Category() {
     const [dbCameras, setDbCameras] = useState([]);
@@ -22,11 +25,24 @@ export default function Category() {
         { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryGimbalImg }
     ];
 
-    // Hàm xử lý ảnh an toàn chống lỗi mất ảnh
-    const getSafeImage = (img) => {
-        if (!img) return categoryCameraImg;
-        if (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) return img;
-        return categoryCameraImg;
+    // Hàm ánh xạ thông minh dựa vào tên sản phẩm
+    const getSafeImage = (cam) => {
+        // Nếu có link ảnh chuẩn trên mạng thì ưu tiên dùng
+        if (cam.image && (cam.image.startsWith('http') || cam.image.startsWith('data:') || cam.image.startsWith('/'))) {
+            // Ngoại lệ: Nếu Admin lỡ nhập tên file rác không hợp lệ, chúng ta bắt theo tên sản phẩm
+            if (!cam.image.includes('/') && !cam.image.includes('http')) {
+                // Fallthrough xuống dưới để nhận diện theo tên
+            } else {
+                return cam.image;
+            }
+        }
+
+        const name = (cam.name || '').toLowerCase();
+        if (name.includes('a7 iii') || name.includes('a73')) return a73CameraImg;
+        if (name.includes('a7r iii') || name.includes('a7r3')) return sonyA7r3Img;
+        if (name.includes('a7 iv')) return a74CameraImg;
+
+        return categoryCameraImg; // Ảnh mặc định nếu không khớp mẫu nào
     };
 
     useEffect(() => {
@@ -85,7 +101,7 @@ export default function Category() {
                                                 {cam.category || 'Thiết bị'}
                                             </span>
                                             <img
-                                                src={getSafeImage(cam.image)}
+                                                src={getSafeImage(cam)}
                                                 alt={cam.name}
                                                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                             />

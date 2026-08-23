@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
+
 import categoryCameraImg from '../assets/category-camera.jpg';
 import a74CameraImg from '../assets/a74-camera.jpg';
+import a73CameraImg from '../assets/a73-camera.jpg';
+import sonyA7r3Img from '../assets/sony-a7r3.jpg';
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -26,10 +29,19 @@ export default function ProductDetail() {
         { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '1.5kg', videoCapabilities: 'Tải trọng 4.5kg', batteryLife: '12 giờ' }
     ];
 
-    // Hàm xử lý ảnh an toàn
-    const getSafeImage = (img) => {
-        if (!img) return categoryCameraImg;
-        if (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) return img;
+    const getSafeImage = (prod) => {
+        if (!prod) return categoryCameraImg;
+        if (prod.image && (prod.image.startsWith('http') || prod.image.startsWith('data:') || prod.image.startsWith('/'))) {
+            if (prod.image.includes('/') || prod.image.includes('http')) {
+                return prod.image;
+            }
+        }
+
+        const name = (prod.name || '').toLowerCase();
+        if (name.includes('a7 iii') || name.includes('a73')) return a73CameraImg;
+        if (name.includes('a7r iii') || name.includes('a7r3')) return sonyA7r3Img;
+        if (name.includes('a7 iv')) return a74CameraImg;
+
         return categoryCameraImg;
     };
 
@@ -103,7 +115,7 @@ export default function ProductDetail() {
         <div className="max-w-6xl mx-auto px-6 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                 <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 flex items-center justify-center">
-                    <img src={getSafeImage(product.image)} alt={product.name} className="max-h-96 object-contain" />
+                    <img src={getSafeImage(product)} alt={product.name} className="max-h-96 object-contain" />
                 </div>
 
                 <div className="space-y-6">
