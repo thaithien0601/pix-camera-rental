@@ -1,0 +1,14 @@
+const mongoose = require('mongoose');
+
+const BookingSchema = new mongoose.Schema({
+    camera: { type: mongoose.Schema.Types.ObjectId, ref: 'Camera', required: true },
+    customerName: { type: String, required: true },
+    phone: { type: String, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    totalPrice: { type: Number, required: true },
+    status: { type: String, enum: ['pending', 'confirmed', 'active', 'completed', 'cancelled'], default: 'confirmed' },
+    createdAt: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model('Booking', BookingSchema);

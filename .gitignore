@@ -1,0 +1,12 @@
+# Bỏ qua các thư mục dependencies nặng
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Bỏ qua thư mục build / phân phối
+dist/
+build/
+
+# Bỏ qua file môi trường hoặc hệ thống
+.env
+.DS_Store
