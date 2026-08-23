@@ -2,47 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 
-// Import các file ảnh cục bộ từ thư mục assets
-import categoryCameraImg from '../assets/category-camera.jpg';
-import categoryLensImg from '../assets/category-lens.jpg';
-import categoryAccessoryImg from '../assets/category-accessory.jpg';
-import categoryLedLightImg from '../assets/category-led-light.jpg';
-import categoryGimbalImg from '../assets/category-gimbal.jpg';
-import a74CameraImg from '../assets/a74-camera.jpg';
-import a73CameraImg from '../assets/a73-camera.jpg';
-import sonyA7r3Img from '../assets/sony-a7r3.jpg';
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80';
 
 export default function Category() {
     const [dbCameras, setDbCameras] = useState([]);
     const [selectedBrand, setSelectedBrand] = useState('Tất cả');
 
     const defaultCameras = [
-        { id: 'def-1', name: 'Sony A7 IV + Kit 24-70mm', brand: 'Sony', category: 'Máy ảnh', price_6h: 210000, price_12h: 280000, price_24h: 350000, image: a74CameraImg },
+        { id: 'def-1', name: 'Sony A7 IV + Kit 24-70mm', brand: 'Sony', category: 'Máy ảnh', price_6h: 210000, price_12h: 280000, price_24h: 350000, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80' },
         { id: 'def-2', name: 'Canon EOS R6 Mark II', brand: 'Canon', category: 'Máy ảnh', price_6h: 240000, price_12h: 320000, price_24h: 400000, image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80' },
-        { id: 'def-3', name: 'Sony FE 35mm f/1.4 GM', brand: 'Sony', category: 'Ống kính', price_6h: 150000, price_12h: 200000, price_24h: 250000, image: categoryLensImg },
-        { id: 'def-4', name: 'Godox AD200 Pro Strobe', brand: 'Godox', category: 'Flash', price_6h: 90000, price_12h: 120000, price_24h: 150000, image: categoryAccessoryImg },
-        { id: 'def-5', name: 'Đèn Nanlite Forza 60B', brand: 'Nanlite', category: 'Đèn Led', price_6h: 110000, price_12h: 150000, price_24h: 180000, image: categoryLedLightImg },
-        { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryGimbalImg }
+        { id: 'def-3', name: 'Sony FE 35mm f/1.4 GM', brand: 'Sony', category: 'Ống kính', price_6h: 150000, price_12h: 200000, price_24h: 250000, image: 'https://images.unsplash.com/photo-1617005082133-5c5b4ed3788a?auto=format&fit=crop&w=600&q=80' },
+        { id: 'def-4', name: 'Godox AD200 Pro Strobe', brand: 'Godox', category: 'Flash', price_6h: 90000, price_12h: 120000, price_24h: 150000, image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80' },
+        { id: 'def-5', name: 'Đèn Nanlite Forza 60B', brand: 'Nanlite', category: 'Đèn Led', price_6h: 110000, price_12h: 150000, price_24h: 180000, image: 'https://images.unsplash.com/photo-1519638399535-1b036603ac77?auto=format&fit=crop&w=600&q=80' },
+        { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: 'https://images.unsplash.com/photo-1581591524425-c7e0978865fc?auto=format&fit=crop&w=600&q=80' }
     ];
 
-    // Hàm ánh xạ thông minh dựa vào tên sản phẩm
+    // Hàm quét thông minh: Tự nhận diện theo TÊN sản phẩm trong database
     const getSafeImage = (cam) => {
-        // Nếu có link ảnh chuẩn trên mạng thì ưu tiên dùng
-        if (cam.image && (cam.image.startsWith('http') || cam.image.startsWith('data:') || cam.image.startsWith('/'))) {
-            // Ngoại lệ: Nếu Admin lỡ nhập tên file rác không hợp lệ, chúng ta bắt theo tên sản phẩm
-            if (!cam.image.includes('/') && !cam.image.includes('http')) {
-                // Fallthrough xuống dưới để nhận diện theo tên
-            } else {
-                return cam.image;
-            }
+        const name = (cam.name || '').toLowerCase();
+
+        // Nếu tên sản phẩm chứa A7 III hoặc A73 -> Gán ảnh Sony A7 III chuẩn
+        if (name.includes('a7 iii') || name.includes('a73')) {
+            return 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80';
+        }
+        // Nếu tên sản phẩm chứa A7r III hoặc A7r3 -> Gán ảnh Sony A7r III chuẩn
+        if (name.includes('a7r iii') || name.includes('a7r3') || name.includes('a7r')) {
+            return 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80';
         }
 
-        const name = (cam.name || '').toLowerCase();
-        if (name.includes('a7 iii') || name.includes('a73')) return a73CameraImg;
-        if (name.includes('a7r iii') || name.includes('a7r3')) return sonyA7r3Img;
-        if (name.includes('a7 iv')) return a74CameraImg;
+        // Nếu Admin có dán link ảnh trực tiếp trên mạng (bắt đầu bằng http) thì dùng link đó
+        if (cam.image && cam.image.startsWith('http')) {
+            return cam.image;
+        }
 
-        return categoryCameraImg; // Ảnh mặc định nếu không khớp mẫu nào
+        return FALLBACK_IMAGE;
     };
 
     useEffect(() => {
@@ -65,7 +58,6 @@ export default function Category() {
             <h1 className="text-2xl md:text-3xl font-extrabold mb-6 tracking-tight">Danh mục thiết bị & Bảng giá linh hoạt</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
-                {/* Bộ lọc */}
                 <div className="border border-gray-200 rounded-xl p-4 md:p-6 bg-gray-50 h-fit space-y-4">
                     <h3 className="font-bold text-sm uppercase tracking-wider text-gray-700">Bộ lọc thông minh</h3>
                     <div>
@@ -85,7 +77,6 @@ export default function Category() {
                     </div>
                 </div>
 
-                {/* Lưới sản phẩm */}
                 <div className="md:col-span-3">
                     {filteredCameras.length === 0 ? (
                         <div className="border border-dashed border-gray-300 rounded-xl p-12 text-center bg-gray-50">
