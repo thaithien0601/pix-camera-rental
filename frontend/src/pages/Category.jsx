@@ -22,6 +22,13 @@ export default function Category() {
         { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryGimbalImg }
     ];
 
+    // Hàm xử lý ảnh an toàn chống lỗi mất ảnh
+    const getSafeImage = (img) => {
+        if (!img) return categoryCameraImg;
+        if (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) return img;
+        return categoryCameraImg;
+    };
+
     useEffect(() => {
         fetch(`${API_URL}/api/cameras`)
             .then((res) => res.json())
@@ -62,7 +69,7 @@ export default function Category() {
                     </div>
                 </div>
 
-                {/* Lưới sản phẩm: 1 cột trên mobile, 2 cột trên tablet, 3 cột trên desktop */}
+                {/* Lưới sản phẩm */}
                 <div className="md:col-span-3">
                     {filteredCameras.length === 0 ? (
                         <div className="border border-dashed border-gray-300 rounded-xl p-12 text-center bg-gray-50">
@@ -78,7 +85,7 @@ export default function Category() {
                                                 {cam.category || 'Thiết bị'}
                                             </span>
                                             <img
-                                                src={cam.image || categoryCameraImg}
+                                                src={getSafeImage(cam.image)}
                                                 alt={cam.name}
                                                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                             />

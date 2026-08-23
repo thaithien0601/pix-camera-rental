@@ -10,7 +10,6 @@ export default function ProductDetail() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Form đặt thuê
     const [customerName, setCustomerName] = useState('');
     const [phone, setPhone] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -26,6 +25,13 @@ export default function ProductDetail() {
         { id: 'def-5', name: 'Đèn Nanlite Forza 60B', brand: 'Nanlite', category: 'Đèn Led', price_6h: 110000, price_12h: 150000, price_24h: 180000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '830g', videoCapabilities: 'Bi-color', batteryLife: 'Pin V-mount' },
         { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '1.5kg', videoCapabilities: 'Tải trọng 4.5kg', batteryLife: '12 giờ' }
     ];
+
+    // Hàm xử lý ảnh an toàn
+    const getSafeImage = (img) => {
+        if (!img) return categoryCameraImg;
+        if (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) return img;
+        return categoryCameraImg;
+    };
 
     useEffect(() => {
         const foundDefault = defaultCameras.find(item => item.id === id);
@@ -97,7 +103,7 @@ export default function ProductDetail() {
         <div className="max-w-6xl mx-auto px-6 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                 <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 flex items-center justify-center">
-                    <img src={product.image || categoryCameraImg} alt={product.name} className="max-h-96 object-contain" />
+                    <img src={getSafeImage(product.image)} alt={product.name} className="max-h-96 object-contain" />
                 </div>
 
                 <div className="space-y-6">
