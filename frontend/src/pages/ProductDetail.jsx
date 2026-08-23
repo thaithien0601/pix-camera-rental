@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_URL } from '../config';
 import categoryCameraImg from '../assets/category-camera.jpg';
-import a74CameraImg from '../assets/a74-camera.jpg'; // (Lưu ý: Đổi .jpg thành .png nếu ảnh của bạn có đuôi .png)
+import a74CameraImg from '../assets/a74-camera.jpg';
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -32,7 +33,7 @@ export default function ProductDetail() {
             setProduct(foundDefault);
             setLoading(false);
         } else {
-            fetch(`http://localhost:5000/api/cameras/${id}`)
+            fetch(`${API_URL}/api/cameras/${id}`)
                 .then(res => res.json())
                 .then(data => {
                     setProduct(data);
@@ -67,7 +68,7 @@ export default function ProductDetail() {
         let unitPrice = bookingType === '6h' ? p6h : bookingType === '12h' ? p12h : p24h;
 
         try {
-            const res = await fetch('http://localhost:5000/api/cameras/booking', {
+            const res = await fetch(`${API_URL}/api/cameras/booking`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

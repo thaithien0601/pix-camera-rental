@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../config';
 
 import categoryCameraImg from '../assets/category-camera.jpg';
 import categoryLensImg from '../assets/category-lens.jpg';
 import categoryAccessoryImg from '../assets/category-accessory.jpg';
 import categoryLedLightImg from '../assets/category-led-light.jpg';
 import categoryGimbalImg from '../assets/category-gimbal.jpg';
-import a74CameraImg from '../assets/a74-camera.jpg'; // (Lưu ý: Đổi .jpg thành .png nếu ảnh của bạn có đuôi .png)
+import a74CameraImg from '../assets/a74-camera.jpg';
 
 export default function Category() {
     const [dbCameras, setDbCameras] = useState([]);
@@ -21,7 +22,7 @@ export default function Category() {
             price_6h: 210000,
             price_12h: 280000,
             price_24h: 350000,
-            image: a74CameraImg // Dùng ảnh cục bộ vừa thêm
+            image: a74CameraImg
         },
         {
             id: 'def-2',
@@ -76,7 +77,7 @@ export default function Category() {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/cameras')
+        fetch(`${API_URL}/api/cameras`)
             .then((res) => res.json())
             .then((data) => {
                 const formatted = data.map(item => ({
