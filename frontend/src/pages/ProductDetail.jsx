@@ -4,8 +4,6 @@ import { API_URL } from '../config';
 
 import categoryCameraImg from '../assets/category-camera.jpg';
 import a74CameraImg from '../assets/a74-camera.jpg';
-import a73CameraImg from '../assets/a73-camera.jpg';
-import sonyA7r3Img from '../assets/sony-a7r3.jpg';
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -31,16 +29,16 @@ export default function ProductDetail() {
 
     const getSafeImage = (prod) => {
         if (!prod) return categoryCameraImg;
-        if (prod.image && (prod.image.startsWith('http') || prod.image.startsWith('data:') || prod.image.startsWith('/'))) {
-            if (prod.image.includes('/') || prod.image.includes('http')) {
+        const name = (prod.name || '').toLowerCase();
+        if (name.includes('a7 iii') || name.includes('a73')) return '/a73-camera.jpg';
+        if (name.includes('a7r iii') || name.includes('a7r3') || name.includes('a7r')) return '/sony-a7r3.jpg';
+
+        if (prod.image) {
+            if (prod.image.startsWith('http') || prod.image.startsWith('data:') || prod.image.startsWith('/')) {
                 return prod.image;
             }
+            return `/${prod.image}`;
         }
-
-        const name = (prod.name || '').toLowerCase();
-        if (name.includes('a7 iii') || name.includes('a73')) return a73CameraImg;
-        if (name.includes('a7r iii') || name.includes('a7r3')) return sonyA7r3Img;
-        if (name.includes('a7 iv')) return a74CameraImg;
 
         return categoryCameraImg;
     };

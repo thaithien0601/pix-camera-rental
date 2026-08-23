@@ -2,119 +2,70 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../config';
 
+import categoryCameraImg from '../assets/category-camera.jpg';
+import categoryLensImg from '../assets/category-lens.jpg';
+import categoryAccessoryImg from '../assets/category-accessory.jpg';
+import categoryLedLightImg from '../assets/category-led-light.jpg';
+import categoryGimbalImg from '../assets/category-gimbal.jpg';
+import a74CameraImg from '../assets/a74-camera.jpg';
+
 export default function Category() {
     const [dbCameras, setDbCameras] = useState([]);
     const [selectedBrand, setSelectedBrand] = useState('Tất cả');
 
-    // Sử dụng ảnh online cho các sản phẩm mặc định để chống lỗi build trên Vercel
     const defaultCameras = [
-        {
-            id: 'def-1',
-            name: 'Sony A7 IV + Kit 24-70mm',
-            brand: 'Sony',
-            category: 'Máy ảnh',
-            price_6h: 210000,
-            price_12h: 280000,
-            price_24h: 350000,
-            image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 'def-2',
-            name: 'Canon EOS R6 Mark II',
-            brand: 'Canon',
-            category: 'Máy ảnh',
-            price_6h: 240000,
-            price_12h: 320000,
-            price_24h: 400000,
-            image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 'def-3',
-            name: 'Sony FE 35mm f/1.4 GM',
-            brand: 'Sony',
-            category: 'Ống kính',
-            price_6h: 150000,
-            price_12h: 200000,
-            price_24h: 250000,
-            image: 'https://images.unsplash.com/photo-1617005082133-5c5b4ed3788a?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 'def-4',
-            name: 'Godox AD200 Pro Strobe',
-            brand: 'Godox',
-            category: 'Flash',
-            price_6h: 90000,
-            price_12h: 120000,
-            price_24h: 150000,
-            image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 'def-5',
-            name: 'Đèn Nanlite Forza 60B',
-            brand: 'Nanlite',
-            category: 'Đèn Led',
-            price_6h: 110000,
-            price_12h: 150000,
-            price_24h: 180000,
-            image: 'https://images.unsplash.com/photo-1519638399535-1b036603ac77?auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 'def-6',
-            name: 'Gimbal DJI Ronin RS 3 Pro',
-            brand: 'DJI',
-            category: 'Gimbal',
-            price_6h: 120000,
-            price_12h: 160000,
-            price_24h: 200000,
-            image: 'https://images.unsplash.com/photo-1581591524425-c7e0978865fc?auto=format&fit=crop&w=600&q=80'
-        }
+        { id: 'def-1', name: 'Sony A7 IV + Kit 24-70mm', brand: 'Sony', category: 'Máy ảnh', price_6h: 210000, price_12h: 280000, price_24h: 350000, image: a74CameraImg },
+        { id: 'def-2', name: 'Canon EOS R6 Mark II', brand: 'Canon', category: 'Máy ảnh', price_6h: 240000, price_12h: 320000, price_24h: 400000, image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80' },
+        { id: 'def-3', name: 'Sony FE 35mm f/1.4 GM', brand: 'Sony', category: 'Ống kính', price_6h: 150000, price_12h: 200000, price_24h: 250000, image: categoryLensImg },
+        { id: 'def-4', name: 'Godox AD200 Pro Strobe', brand: 'Godox', category: 'Flash', price_6h: 90000, price_12h: 120000, price_24h: 150000, image: categoryAccessoryImg },
+        { id: 'def-5', name: 'Đèn Nanlite Forza 60B', brand: 'Nanlite', category: 'Đèn Led', price_6h: 110000, price_12h: 150000, price_24h: 180000, image: categoryLedLightImg },
+        { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryGimbalImg }
     ];
 
-    // Hàm xử lý ảnh an toàn: Hỗ trợ cả link mạng lẫn tên file trong thư mục public
-    const getSafeImage = (img) => {
-        const fallback = 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80';
-        if (!img) return fallback;
-        if (img.startsWith('http') || img.startsWith('data:') || img.startsWith('/')) {
-            return img;
+    // Hàm nhận diện ảnh an toàn tuyệt đối, không lỗi build
+    const getSafeImage = (cam) => {
+        const name = (cam.name || '').toLowerCase();
+        if (name.includes('a7 iii') || name.includes('a73')) return '/a73-camera.jpg';
+        if (name.includes('a7r iii') || name.includes('a7r3') || name.includes('a7r')) return '/sony-a7r3.jpg';
+
+        if (cam.image) {
+            if (cam.image.startsWith('http') || cam.image.startsWith('data:') || cam.image.startsWith('/')) {
+                return cam.image;
+            }
+            return `/${cam.image}`;
         }
-        // Nếu Admin nhập tên file kiểu 'a73-camera.jpg', tự động trỏ vào thư mục public
-        return `/${img}`;
+
+        return categoryCameraImg;
     };
 
     useEffect(() => {
         fetch(`${API_URL}/api/cameras`)
             .then((res) => res.json())
             .then((data) => {
-                const formatted = data.map(item => ({
-                    ...item,
-                    id: item.id
-                }));
+                const formatted = data.map(item => ({ ...item, id: item.id }));
                 setDbCameras(formatted);
             })
-            .catch((err) => {
-                console.error('Lỗi khi tải thiết bị từ cơ sở dữ liệu:', err);
-            });
+            .catch((err) => console.error('Lỗi khi tải thiết bị:', err));
     }, []);
 
     const allCameras = [...defaultCameras, ...dbCameras];
-
     const filteredCameras = selectedBrand === 'Tất cả'
         ? allCameras
         : allCameras.filter(cam => cam.brand?.toLowerCase() === selectedBrand.toLowerCase());
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-12">
-            <h1 className="text-3xl font-extrabold mb-6 tracking-tight">Danh mục thiết bị & Bảng giá linh hoạt</h1>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
+            <h1 className="text-2xl md:text-3xl font-extrabold mb-6 tracking-tight">Danh mục thiết bị & Bảng giá linh hoạt</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div className="border border-gray-200 rounded-xl p-6 bg-gray-50 h-fit space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+                <div className="border border-gray-200 rounded-xl p-4 md:p-6 bg-gray-50 h-fit space-y-4">
                     <h3 className="font-bold text-sm uppercase tracking-wider text-gray-700">Bộ lọc thông minh</h3>
                     <div>
                         <label className="block text-xs font-semibold text-gray-500 mb-1">Hãng</label>
                         <select
                             value={selectedBrand}
                             onChange={(e) => setSelectedBrand(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md p-2 bg-white text-sm focus:outline-none focus:border-black"
+                            className="w-full border border-gray-300 rounded-md p-2.5 bg-white text-sm focus:outline-none focus:border-black"
                         >
                             <option value="Tất cả">Tất cả hãng</option>
                             <option value="Sony">Sony</option>
@@ -132,7 +83,7 @@ export default function Category() {
                             <p className="text-gray-500 text-sm font-medium">Chưa có thiết bị nào thuộc hãng này.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredCameras.map((cam) => (
                                 <div key={cam.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
                                     <div>
@@ -141,7 +92,7 @@ export default function Category() {
                                                 {cam.category || 'Thiết bị'}
                                             </span>
                                             <img
-                                                src={getSafeImage(cam.image)}
+                                                src={getSafeImage(cam)}
                                                 alt={cam.name}
                                                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                             />
