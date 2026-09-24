@@ -35,7 +35,6 @@ export default function Navbar() {
                 <nav className="hidden md:flex items-center space-x-8 font-semibold text-sm">
                     <Link to="/" className="hover:text-blue-600 transition">Trang chủ</Link>
                     <Link to="/category" className="hover:text-blue-600 transition">Máy ảnh & Thiết bị</Link>
-                    <Link to="/admin" className="hover:text-blue-600 transition">Admin Panel</Link>
                 </nav>
 
                 {/* Nút Đặt Thuê Ngay (Desktop) */}
@@ -81,13 +80,6 @@ export default function Navbar() {
                     >
                         Máy ảnh & Thiết bị
                     </Link>
-                    <Link
-                        to="/admin"
-                        onClick={() => setIsOpen(false)}
-                        className="block font-semibold text-sm py-2 border-b border-gray-100"
-                    >
-                        Admin Panel
-                    </Link>
                     <button
                         onClick={() => { setIsOpen(false); navigate('/category'); }}
                         className="w-full bg-black text-white font-bold text-xs uppercase py-3 rounded-full mt-2 shadow-md"
@@ -98,3 +90,4 @@ export default function Navbar() {
             )}
         </header>
     );
+}
