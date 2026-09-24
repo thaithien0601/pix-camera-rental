@@ -140,12 +140,16 @@ export default function Home() {
                     ].map((prod, idx) => (
                         <div key={idx} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
                             <div>
-                                <div className="h-48 bg-gray-50 p-3 flex items-center justify-center relative overflow-hidden border-b border-gray-100">
+                                {/* Bọc thẻ Link vào khung ảnh */}
+                                <Link to="/product/1" className="h-48 bg-gray-50 p-3 flex items-center justify-center relative overflow-hidden border-b border-gray-100 block">
                                     <span className="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider z-10">HOT</span>
                                     <img src={prod.img} alt={prod.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
-                                </div>
+                                </Link>
                                 <div className="p-4">
-                                    <h4 className="font-bold text-sm text-gray-900 line-clamp-1">{prod.name}</h4>
+                                    {/* Bọc thẻ Link vào tên sản phẩm */}
+                                    <Link to="/product/1">
+                                        <h4 className="font-bold text-sm text-gray-900 line-clamp-1 hover:text-gray-600 transition">{prod.name}</h4>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="p-4 pt-0 flex items-center justify-between border-t border-gray-100 mt-2">
