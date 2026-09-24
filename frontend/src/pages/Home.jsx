@@ -133,21 +133,21 @@ export default function Home() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                        { name: 'Sony A7 IV + Kit 24-70mm', price: '450.000đ / ngày', img: catSonyCameraImg },
-                        { name: 'Sony FE 35mm f/1.4 GM', price: '250.000đ / ngày', img: catSonyLensImg },
-                        { name: 'Đèn Nanlite Forza 60B', price: '180.000đ / ngày', img: catLedLightImg },
-                        { name: 'Gimbal DJI Ronin RS 3 Pro', price: '200.000đ / ngày', img: catGimbalImg }
+                        { id: 'def-1', name: 'Sony A7 IV + Kit 24-70mm', price: '450.000đ / ngày', img: catSonyCameraImg },
+                        { id: 'def-3', name: 'Sony FE 35mm f/1.4 GM', price: '250.000đ / ngày', img: catSonyLensImg },
+                        { id: 'def-5', name: 'Đèn Nanlite Forza 60B', price: '180.000đ / ngày', img: catLedLightImg },
+                        { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', price: '200.000đ / ngày', img: catGimbalImg }
                     ].map((prod, idx) => (
                         <div key={idx} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
                             <div>
-                                {/* Bọc thẻ Link vào khung ảnh */}
-                                <Link to="/product/1" className="h-48 bg-gray-50 p-3 flex items-center justify-center relative overflow-hidden border-b border-gray-100 block">
+                                {/* Link ảnh trỏ đúng ID của từng sản phẩm */}
+                                <Link to={`/product/${prod.id}`} className="h-48 bg-gray-50 p-3 flex items-center justify-center relative overflow-hidden border-b border-gray-100 block">
                                     <span className="absolute top-3 left-3 bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider z-10">HOT</span>
                                     <img src={prod.img} alt={prod.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                                 </Link>
                                 <div className="p-4">
-                                    {/* Bọc thẻ Link vào tên sản phẩm */}
-                                    <Link to="/product/1">
+                                    {/* Link tên sản phẩm trỏ đúng ID của từng sản phẩm */}
+                                    <Link to={`/product/${prod.id}`}>
                                         <h4 className="font-bold text-sm text-gray-900 line-clamp-1 hover:text-gray-600 transition">{prod.name}</h4>
                                     </Link>
                                 </div>
@@ -157,7 +157,8 @@ export default function Home() {
                                     <span className="text-[10px] text-gray-400 block uppercase font-bold">Giá thuê</span>
                                     <span className="text-xs font-black text-gray-900">{prod.price}</span>
                                 </div>
-                                <Link to="/product/1" className="bg-black text-white px-4 py-2 rounded-md text-xs font-bold hover:bg-gray-800 transition">
+                                {/* Nút Thuê ngay trỏ đúng ID của từng sản phẩm */}
+                                <Link to={`/product/${prod.id}`} className="bg-black text-white px-4 py-2 rounded-md text-xs font-bold hover:bg-gray-800 transition">
                                     Thuê ngay
                                 </Link>
                             </div>
