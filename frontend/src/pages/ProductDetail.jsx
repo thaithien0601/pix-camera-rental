@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
 
+// IMPORT ĐẦY ĐỦ CÁC HÌNH ẢNH CHUYÊN DỤNG CHO TỪNG SẢN PHẨM
 import categoryCameraImg from '../assets/category-camera.jpg';
 import a74CameraImg from '../assets/a74-camera.jpg';
+import catSonyLensImg from '../assets/category-sony-lens.jpg';
+import catFlashGodoxImg from '../assets/category-flash-godox.jpg';
+import catLedLightImg from '../assets/category-led-light.jpg';
+import catGimbalImg from '../assets/category-gimbal.jpg';
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -21,25 +26,20 @@ export default function ProductDetail() {
     const defaultCameras = [
         { id: 'def-1', name: 'Sony A7 IV + Kit 24-70mm', brand: 'Sony', category: 'Máy ảnh', price_6h: 210000, price_12h: 280000, price_24h: 350000, image: a74CameraImg, sensor: 'Full-frame Exmor R', isoRange: '100 - 51200', lensMount: 'E-mount', weight: '658g', videoCapabilities: '4K 60p', batteryLife: '400 tấm' },
         { id: 'def-2', name: 'Canon EOS R6 Mark II', brand: 'Canon', category: 'Máy ảnh', price_6h: 240000, price_12h: 320000, price_24h: 400000, image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=600&q=80', sensor: 'Full-frame CMOS', isoRange: '100 - 102400', lensMount: 'RF mount', weight: '670g', videoCapabilities: '4K 60p', batteryLife: '450 tấm' },
-        { id: 'def-3', name: 'Sony FE 35mm f/1.4 GM', brand: 'Sony', category: 'Ống kính', price_6h: 150000, price_12h: 200000, price_24h: 250000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'E-mount', weight: '524g', videoCapabilities: 'N/A', batteryLife: 'N/A' },
-        { id: 'def-4', name: 'Godox AD200 Pro Strobe', brand: 'Godox', category: 'Flash', price_6h: 90000, price_12h: 120000, price_24h: 150000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '560g', videoCapabilities: 'N/A', batteryLife: '2900mAh' },
-        { id: 'def-5', name: 'Đèn Nanlite Forza 60B', brand: 'Nanlite', category: 'Đèn Led', price_6h: 110000, price_12h: 150000, price_24h: 180000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '830g', videoCapabilities: 'Bi-color', batteryLife: 'Pin V-mount' },
-        { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: categoryCameraImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '1.5kg', videoCapabilities: 'Tải trọng 4.5kg', batteryLife: '12 giờ' }
+        { id: 'def-3', name: 'Sony FE 35mm f/1.4 GM', brand: 'Sony', category: 'Ống kính', price_6h: 150000, price_12h: 200000, price_24h: 250000, image: catSonyLensImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'E-mount', weight: '524g', videoCapabilities: 'N/A', batteryLife: 'N/A' },
+        { id: 'def-4', name: 'Godox AD200 Pro Strobe', brand: 'Godox', category: 'Flash', price_6h: 90000, price_12h: 120000, price_24h: 150000, image: catFlashGodoxImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '560g', videoCapabilities: 'N/A', batteryLife: '2900mAh' },
+        { id: 'def-5', name: 'Đèn Nanlite Forza 60B', brand: 'Nanlite', category: 'Đèn Led', price_6h: 110000, price_12h: 150000, price_24h: 180000, image: catLedLightImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '830g', videoCapabilities: 'Bi-color', batteryLife: 'Pin V-mount' },
+        { id: 'def-6', name: 'Gimbal DJI Ronin RS 3 Pro', brand: 'DJI', category: 'Gimbal', price_6h: 120000, price_12h: 160000, price_24h: 200000, image: catGimbalImg, sensor: 'N/A', isoRange: 'N/A', lensMount: 'N/A', weight: '1.5kg', videoCapabilities: 'Tải trọng 4.5kg', batteryLife: '12 giờ' }
     ];
 
     const getSafeImage = (prod) => {
         if (!prod) return categoryCameraImg;
-        const name = (prod.name || '').toLowerCase();
-        if (name.includes('a7 iii') || name.includes('a73')) return '/a73-camera.jpg';
-        if (name.includes('a7r iii') || name.includes('a7r3') || name.includes('a7r')) return '/sony-a7r3.jpg';
-
         if (prod.image) {
             if (prod.image.startsWith('http') || prod.image.startsWith('data:') || prod.image.startsWith('/')) {
                 return prod.image;
             }
             return `/${prod.image}`;
         }
-
         return categoryCameraImg;
     };
 
