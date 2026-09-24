@@ -13,7 +13,10 @@ export default function Admin() {
     const [price6h, setPrice6h] = useState('');
     const [price12h, setPrice12h] = useState('');
     const [price24h, setPrice24h] = useState('');
-    const [image, setImage] = useState('');
+
+    // State cho việc chọn file ảnh và hiển thị preview
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
 
     // 6 trường thông số kỹ thuật
     const [spec1, setSpec1] = useState('');
@@ -104,27 +107,41 @@ export default function Admin() {
         }
     }, [isLoggedIn]);
 
+    // Xử lý khi người dùng chọn file ảnh
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file)); // Tạo link tạm để xem trước ảnh
+        }
+    };
+
     const handleAddCamera = async (e) => {
         e.preventDefault();
         try {
+            // Sử dụng FormData để gửi file và các trường dữ liệu lên server
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('brand', brand);
+            formData.append('category', category);
+            formData.append('price_6h', Number(price6h));
+            formData.append('price_12h', Number(price12h));
+            formData.append('price_24h', Number(price24h));
+
+            if (imageFile) {
+                formData.append('image', imageFile); // Gửi file ảnh thực tế
+            }
+
+            formData.append('sensor', spec1);
+            formData.append('isoRange', spec2);
+            formData.append('lensMount', spec3);
+            formData.append('weight', spec4);
+            formData.append('videoCapabilities', spec5);
+            formData.append('batteryLife', spec6);
+
             const res = await fetch(`${API_URL}/api/cameras`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    brand,
-                    category,
-                    price_6h: Number(price6h),
-                    price_12h: Number(price12h),
-                    price_24h: Number(price24h),
-                    image,
-                    sensor: spec1,
-                    isoRange: spec2,
-                    lensMount: spec3,
-                    weight: spec4,
-                    videoCapabilities: spec5,
-                    batteryLife: spec6
-                })
+                body: formData // Không set Content-Type header khi dùng FormData
             });
 
             if (res.ok) {
@@ -133,7 +150,8 @@ export default function Admin() {
                 setPrice6h('');
                 setPrice12h('');
                 setPrice24h('');
-                setImage('');
+                setImageFile(null);
+                setImagePreview('');
                 setSpec1('');
                 setSpec2('');
                 setSpec3('');
@@ -171,7 +189,7 @@ export default function Admin() {
             <div className="max-w-md mx-auto px-6 py-24">
                 <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm text-center space-y-6">
                     <h2 className="text-2xl font-black">🔐 Đăng Nhập Quản Trị</h2>
-                    <p className="text-xs text-gray-500">Nhập mã PIN để tiếp tục (Mặc định: 1234)</p>
+                    <p className="text-xs text-gray-500">Nhập mã PIN để tiếp tục (Mặc định: 0601)</p>
                     {message && <div className="p-3 text-xs font-bold rounded-lg bg-red-50 text-red-700 border border-red-200">{message}</div>}
                     <form onSubmit={handleLogin} className="space-y-4">
                         <input
@@ -250,9 +268,21 @@ export default function Admin() {
                         </div>
                     </div>
 
+                    {/* KHU VỰC CHỌN ẢNH TỪ MÁY TÍNH & PREVIEW */}
                     <div>
-                        <label className="block text-xs font-bold text-gray-600 mb-2">Đường dẫn ảnh trực tiếp (URL) hoặc tên file trong thư mục public (VD: a73-camera.jpg)</label>
-                        <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:border-black" placeholder="Dán link ảnh hoặc điền tên file..." />
+                        <label className="block text-xs font-bold text-gray-600 mb-2">Ảnh thiết bị (Chọn từ máy tính)</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white focus:outline-none focus:border-black file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                        />
+                        {imagePreview && (
+                            <div className="mt-4">
+                                <p className="text-xs font-semibold text-gray-500 mb-2">Ảnh xem trước:</p>
+                                <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-xl border border-gray-200 shadow-sm" />
+                            </div>
+                        )}
                     </div>
 
                     {/* KHU VỰC THÔNG SỐ ĐỘNG THEO LOẠI THIẾT BỊ */}
